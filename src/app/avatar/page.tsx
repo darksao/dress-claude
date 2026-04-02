@@ -11,9 +11,13 @@ import ColorPicker from '@/components/avatar/ColorPicker'
 import { AvatarState, AvatarZoneId, SeasonCode, Profile, QuizAnswers } from '@/types'
 
 const SKIN_HEX: Record<string, string> = {
-  'fair': '#FDEBD0',
+  'very-fair': '#FDF3E7',
+  'fair': '#F5DEB3',
+  'light-medium': '#E8C99A',
   'medium': '#D4A574',
+  'tan': '#C08B5C',
   'deep': '#8D5524',
+  'very-deep': '#4A2810',
 }
 
 const HAIR_HEX: Record<string, string> = {
@@ -30,6 +34,7 @@ export default function AvatarPage() {
   const [quizAnswers, setQuizAnswers] = useState<QuizAnswers | null>(null)
   const [seasonCode, setSeasonCode] = useState<SeasonCode | null>(null)
   const [notification, setNotification] = useState<string | null>(null)
+  const [dataLoading, setDataLoading] = useState(true)
   const [selectedZone, setSelectedZone] = useState<AvatarZoneId | null>(null)
   const [avatarState, setAvatarState] = useState<AvatarState>({
     hair: '#1C1C1C',
@@ -42,31 +47,40 @@ export default function AvatarPage() {
     async function load() {
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
 
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single()
+      if (!user) {
+        // Guest mode: load from localStorage
+        const stored = localStorage.getItem('dc_quiz')
+        if (stored) {
+          const parsed = JSON.parse(stored)
+          setSeasonCode(parsed.season as SeasonCode)
+          setQuizAnswers(parsed.answers as QuizAnswers)
+          if (parsed.answers?.hair_color) {
+            const hex = parsed.answers.hair_color.startsWith('custom:')
+              ? parsed.answers.hair_color.replace('custom:', '')
+              : HAIR_HEX[parsed.answers.hair_color]
+            if (hex) setAvatarState(prev => ({ ...prev, hair: hex }))
+          }
+        }
+        setDataLoading(false)
+        return
+      }
 
+      const { data: profileData } = await supabase.from('profiles').select('*').eq('id', user.id).single()
       if (profileData) {
         setProfile(profileData as Profile)
         if (profileData.season) setSeasonCode(profileData.season as SeasonCode)
-        if (profileData.hair_color && HAIR_HEX[profileData.hair_color]) {
-          setAvatarState(prev => ({ ...prev, hair: HAIR_HEX[profileData.hair_color] }))
+        if (profileData.hair_color) {
+          const hex = profileData.hair_color.startsWith('custom:')
+            ? profileData.hair_color.replace('custom:', '')
+            : HAIR_HEX[profileData.hair_color]
+          if (hex) setAvatarState(prev => ({ ...prev, hair: hex }))
         }
       }
 
-      const { data: quizData } = await supabase
-        .from('quiz_results')
-        .select('answers')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single()
-
+      const { data: quizData } = await supabase.from('quiz_results').select('answers').eq('user_id', user.id).order('created_at', { ascending: false }).limit(1).single()
       if (quizData) setQuizAnswers(quizData.answers as QuizAnswers)
+      setDataLoading(false)
     }
     load()
   }, [])
@@ -116,9 +130,13 @@ export default function AvatarPage() {
     ? suggestOutfits(selectedZone, avatarState[selectedZone], season)
     : []
 
-  if (!season) {
-    return (
-      <AuthGuard>
+  return (
+    <AuthGuard>
+      {dataLoading ? (
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
+        </div>
+      ) : !season ? (
         <div className="flex flex-col items-center justify-center min-h-screen px-6 text-center">
           <p className="text-4xl mb-4">🎨</p>
           <p className="text-gray-500 mb-6">Tu n&apos;as pas encore fait le quiz colorimétrie.</p>
@@ -126,12 +144,7 @@ export default function AvatarPage() {
             Faire le quiz →
           </a>
         </div>
-      </AuthGuard>
-    )
-  }
-
-  return (
-    <AuthGuard>
+      ) : (
       <div className="max-w-5xl mx-auto px-4 py-8">
         {/* Notification toast */}
         {notification && (
@@ -218,6 +231,7 @@ export default function AvatarPage() {
           </div>
         </div>
       </div>
+      )}
     </AuthGuard>
   )
 }

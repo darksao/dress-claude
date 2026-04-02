@@ -15,16 +15,17 @@ export default function PhotoPage() {
 
   useEffect(() => {
     async function load() {
+      // Guest mode: load from localStorage
+      const stored = localStorage.getItem('dc_quiz')
+      if (stored) {
+        const parsed = JSON.parse(stored)
+        if (parsed.season) { setCurrentSeason(parsed.season as SeasonCode); return }
+      }
+
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
-
-      const { data } = await supabase
-        .from('profiles')
-        .select('season')
-        .eq('id', user.id)
-        .single()
-
+      const { data } = await supabase.from('profiles').select('season').eq('id', user.id).single()
       if (data?.season) setCurrentSeason(data.season as SeasonCode)
     }
     load()
@@ -33,16 +34,24 @@ export default function PhotoPage() {
   async function handleResult(season: SeasonCode, skinHex: string) {
     setResult({ season, skinHex })
 
+    // Update localStorage for guest
+    const stored = localStorage.getItem('dc_quiz')
+    if (stored) {
+      const parsed = JSON.parse(stored)
+      localStorage.setItem('dc_quiz', JSON.stringify({ ...parsed, season }))
+    }
+
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-
-    await supabase.from('profiles').update({ season }).eq('id', user.id)
+    if (user) await supabase.from('profiles').update({ season }).eq('id', user.id)
   }
 
-  if (!currentSeason) {
-    return (
-      <AuthGuard>
+  const season = currentSeason ? (result ? getSeasonByCode(result.season) : getSeasonByCode(currentSeason)) : null
+  const changed = result && result.season !== currentSeason
+
+  return (
+    <AuthGuard>
+      {!currentSeason ? (
         <div className="flex items-center justify-center min-h-screen px-6 text-center">
           <div>
             <p className="text-4xl mb-4">🎨</p>
@@ -50,15 +59,7 @@ export default function PhotoPage() {
             <a href="/quiz" className="px-6 py-3 bg-black text-white rounded-xl font-medium">Faire le quiz →</a>
           </div>
         </div>
-      </AuthGuard>
-    )
-  }
-
-  const season = result ? getSeasonByCode(result.season) : getSeasonByCode(currentSeason)
-  const changed = result && result.season !== currentSeason
-
-  return (
-    <AuthGuard>
+      ) : (
       <div className="max-w-lg mx-auto px-6 py-12">
         <h1 className="text-3xl font-bold mb-2">Affine avec une photo</h1>
         <p className="text-gray-500 mb-8">Upload un selfie en lumière naturelle pour affiner ton résultat.</p>
@@ -85,6 +86,7 @@ export default function PhotoPage() {
           </div>
         )}
       </div>
+      )}
     </AuthGuard>
   )
 }

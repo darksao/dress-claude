@@ -4,20 +4,31 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
-export default function AuthGuard({ children }: { children: React.ReactNode }) {
+interface Props {
+  children: React.ReactNode
+  required?: boolean
+}
+
+export default function AuthGuard({ children, required = false }: Props) {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
+  const [isGuest, setIsGuest] = useState(false)
 
   useEffect(() => {
     const supabase = createClient()
     supabase.auth.getUser().then(({ data }) => {
       if (!data.user) {
-        router.push('/login')
+        if (required) {
+          router.push('/login')
+        } else {
+          setIsGuest(true)
+          setLoading(false)
+        }
       } else {
         setLoading(false)
       }
     })
-  }, [router])
+  }, [router, required])
 
   if (loading) {
     return (
@@ -27,5 +38,14 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     )
   }
 
-  return <>{children}</>
+  return (
+    <>
+      {isGuest && (
+        <div className="bg-gradient-to-r from-purple-600 to-pink-500 text-white text-sm text-center py-2 px-4">
+          Mode invité — <a href="/signup" className="underline font-medium">Crée un compte</a> pour sauvegarder tes résultats
+        </div>
+      )}
+      {children}
+    </>
+  )
 }
