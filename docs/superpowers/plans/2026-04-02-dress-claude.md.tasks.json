@@ -1,0 +1,75 @@
+{
+  "planPath": "docs/superpowers/plans/2026-04-02-dress-claude.md",
+  "tasks": [
+    {
+      "id": 0,
+      "subject": "Task 0: Project Setup & Configuration",
+      "status": "pending",
+      "description": "**Goal:** Initialize Next.js 14 project with Supabase, Tailwind, TypeScript.\n\n**Files:** package.json, tsconfig.json, tailwind.config.ts, src/app/layout.tsx, src/types/index.ts\n\n**Verify:** npm run build succeeds\n\n```json:metadata\n{\"files\": [\"package.json\", \"src/types/index.ts\", \"src/app/layout.tsx\"], \"verifyCommand\": \"npm run build\", \"acceptanceCriteria\": [\"npm run dev starts on localhost:3000\", \"Tailwind CSS works\", \"TypeScript compiles\"], \"requiresUserVerification\": false}\n```"
+    },
+    {
+      "id": 1,
+      "subject": "Task 1: Supabase Configuration & Database Schema",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Set up Supabase client utilities and database schema with RLS.\n\n**Files:** src/lib/supabase/client.ts, src/lib/supabase/server.ts, src/lib/supabase/middleware.ts, middleware.ts, supabase/migrations/001_initial_schema.sql\n\n**Verify:** npm run build succeeds\n\n```json:metadata\n{\"files\": [\"src/lib/supabase/client.ts\", \"src/lib/supabase/server.ts\", \"middleware.ts\", \"supabase/migrations/001_initial_schema.sql\"], \"verifyCommand\": \"npm run build\", \"acceptanceCriteria\": [\"Supabase clients connect\", \"SQL migration creates tables with RLS\"], \"requiresUserVerification\": false}\n```"
+    },
+    {
+      "id": 2,
+      "subject": "Task 2: Colorimetry Data — Seasons, Quiz Scoring, Combinations",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Define 12 season palettes, quiz scoring algorithm, color combination engine, hair recalculation.\n\n**Files:** src/lib/colorimetry/seasons.ts, src/lib/colorimetry/quiz-scoring.ts, src/lib/colorimetry/color-combinations.ts, src/lib/colorimetry/hair-recalculation.ts\n\n**Verify:** npm run build succeeds\n\n```json:metadata\n{\"files\": [\"src/lib/colorimetry/seasons.ts\", \"src/lib/colorimetry/quiz-scoring.ts\", \"src/lib/colorimetry/color-combinations.ts\", \"src/lib/colorimetry/hair-recalculation.ts\"], \"verifyCommand\": \"npm run build\", \"acceptanceCriteria\": [\"12 seasons defined with palettes\", \"Quiz scoring returns season for any valid input\", \"Color combinations return 3 suggestions\", \"Hair recalculation works\"], \"requiresUserVerification\": false}\n```"
+    },
+    {
+      "id": 3,
+      "subject": "Task 3: Auth Pages — Landing, Login, Signup",
+      "status": "pending",
+      "blockedBy": [1],
+      "description": "**Goal:** Create landing page, login/signup pages, navbar, auth guard.\n\n**Files:** src/app/page.tsx, src/app/login/page.tsx, src/app/signup/page.tsx, src/components/layout/Navbar.tsx, src/components/layout/AuthGuard.tsx, src/app/layout.tsx\n\n**Verify:** npm run build succeeds\n\n```json:metadata\n{\"files\": [\"src/app/page.tsx\", \"src/app/login/page.tsx\", \"src/app/signup/page.tsx\", \"src/components/layout/Navbar.tsx\", \"src/components/layout/AuthGuard.tsx\"], \"verifyCommand\": \"npm run build\", \"acceptanceCriteria\": [\"Landing page renders with hero and CTA\", \"Login authenticates via Supabase\", \"Signup creates account\", \"Navbar shows on all pages\"], \"requiresUserVerification\": false}\n```"
+    },
+    {
+      "id": 4,
+      "subject": "Task 4: Colorimetry Quiz",
+      "status": "pending",
+      "blockedBy": [2, 3],
+      "description": "**Goal:** Build multi-step quiz that determines user's color season.\n\n**Files:** src/app/quiz/page.tsx, src/components/quiz/QuizStep.tsx, src/components/quiz/QuizProgress.tsx, src/app/result/page.tsx\n\n**Verify:** npm run build succeeds\n\n```json:metadata\n{\"files\": [\"src/app/quiz/page.tsx\", \"src/components/quiz/QuizStep.tsx\", \"src/components/quiz/QuizProgress.tsx\", \"src/app/result/page.tsx\"], \"verifyCommand\": \"npm run build\", \"acceptanceCriteria\": [\"5-step quiz renders one question per screen\", \"Result saved to Supabase\", \"Result page shows season and palette\"], \"requiresUserVerification\": false}\n```"
+    },
+    {
+      "id": 5,
+      "subject": "Task 5: Interactive Avatar Page",
+      "status": "pending",
+      "blockedBy": [2, 3],
+      "description": "**Goal:** Build interactive avatar with clickable zones, color picker, outfit suggestions, hair recalculation.\n\n**Files:** src/app/avatar/page.tsx, src/components/avatar/AvatarSvg.tsx, src/components/avatar/AvatarZone.tsx, src/components/avatar/ColorPicker.tsx\n\n**Verify:** npm run build succeeds\n\n```json:metadata\n{\"files\": [\"src/app/avatar/page.tsx\", \"src/components/avatar/AvatarSvg.tsx\", \"src/components/avatar/AvatarZone.tsx\", \"src/components/avatar/ColorPicker.tsx\"], \"verifyCommand\": \"npm run build\", \"acceptanceCriteria\": [\"Avatar renders with 4 clickable zones\", \"Colors update in real-time\", \"Suggestions update dynamically\", \"Hair change triggers season recalculation\", \"Save outfit stores to Supabase\"], \"requiresUserVerification\": false}\n```"
+    },
+    {
+      "id": 6,
+      "subject": "Task 6: Wardrobe Page",
+      "status": "pending",
+      "blockedBy": [5],
+      "description": "**Goal:** Build wardrobe page with saved outfits, favorites, and delete.\n\n**Files:** src/app/wardrobe/page.tsx, src/components/wardrobe/OutfitCard.tsx, src/components/wardrobe/OutfitGrid.tsx\n\n**Verify:** npm run build succeeds\n\n```json:metadata\n{\"files\": [\"src/app/wardrobe/page.tsx\", \"src/components/wardrobe/OutfitCard.tsx\", \"src/components/wardrobe/OutfitGrid.tsx\"], \"verifyCommand\": \"npm run build\", \"acceptanceCriteria\": [\"Lists saved outfits as mini-avatars\", \"Toggle favorite works\", \"Delete outfit works\", \"Empty state when no outfits\"], \"requiresUserVerification\": false}\n```"
+    },
+    {
+      "id": 7,
+      "subject": "Task 7: Photo Analysis Page",
+      "status": "pending",
+      "blockedBy": [4],
+      "description": "**Goal:** Build photo upload page for season refinement via Canvas API color extraction.\n\n**Files:** src/app/quiz/photo/page.tsx, src/components/quiz/PhotoAnalyzer.tsx, src/lib/colorimetry/photo-analysis.ts\n\n**Verify:** npm run build succeeds\n\n```json:metadata\n{\"files\": [\"src/app/quiz/photo/page.tsx\", \"src/components/quiz/PhotoAnalyzer.tsx\", \"src/lib/colorimetry/photo-analysis.ts\"], \"verifyCommand\": \"npm run build\", \"acceptanceCriteria\": [\"Photo upload works\", \"Canvas API extracts colors\", \"Season refinement runs\", \"Result shows confirmed or adjusted season\"], \"requiresUserVerification\": false}\n```"
+    },
+    {
+      "id": 8,
+      "subject": "Task 8: Guide / Education Pages",
+      "status": "pending",
+      "blockedBy": [3],
+      "description": "**Goal:** Build educational guide with 5 articles about colorimetry.\n\n**Files:** src/lib/guide/articles.ts, src/app/guide/page.tsx, src/app/guide/[slug]/page.tsx\n\n**Verify:** npm run build succeeds\n\n```json:metadata\n{\"files\": [\"src/lib/guide/articles.ts\", \"src/app/guide/page.tsx\", \"src/app/guide/[slug]/page.tsx\"], \"verifyCommand\": \"npm run build\", \"acceptanceCriteria\": [\"Guide index lists 5 articles\", \"Individual articles render\", \"Pages accessible without auth\"], \"requiresUserVerification\": false}\n```"
+    },
+    {
+      "id": 9,
+      "subject": "Task 9: Final Polish & Build Verification",
+      "status": "pending",
+      "blockedBy": [4, 5, 6, 7, 8],
+      "description": "**Goal:** Final build verification, responsive testing, cleanup.\n\n**Verify:** npm run build && npm run start — test all routes\n\n```json:metadata\n{\"files\": [], \"verifyCommand\": \"npm run build\", \"acceptanceCriteria\": [\"Build succeeds with zero errors\", \"All pages render correctly\", \"Mobile layout works\", \"Desktop layout works\"], \"requiresUserVerification\": false}\n```"
+    }
+  ],
+  "lastUpdated": "2026-04-02T12:00:00Z"
+}
