@@ -146,16 +146,63 @@ export default function WardrobePage() {
     })
   }
 
+  function pickHarmonious(pool: string[], refColor: string, strategy: 'complement' | 'analogue' | 'neutral'): string {
+    const [rH] = hexToHsl(refColor)
+    if (strategy === 'neutral') {
+      const neutrals = pool.filter(c => hexToHsl(c)[1] < 0.25)
+      if (neutrals.length > 0) return neutrals[Math.floor(Math.random() * neutrals.length)]
+    }
+    const targetHue = strategy === 'complement'
+      ? (rH + 180) % 360
+      : (rH + 30 + Math.random() * 60) % 360
+    // Score with a randomness factor so results vary each time
+    const scored = pool.map(c => {
+      const [h] = hexToHsl(c)
+      const d = Math.min(Math.abs(h - targetHue), 360 - Math.abs(h - targetHue))
+      return { c, score: d + Math.random() * 50 }
+    })
+    return scored.sort((a, b) => a.score - b.score)[0].c
+  }
+
   function generateRandom() {
     if (!season) return
-    const pick = (pool: string[]) => pool[Math.floor(Math.random() * pool.length)]
-    setOutfit(prev => ({
-      hair: locked.has('hair') ? prev.hair : pick(season.hairColors),
-      top: locked.has('top') ? prev.top : pick(season.colors),
-      bottom: locked.has('bottom') ? prev.bottom : pick(season.colors),
-      shoes: locked.has('shoes') ? prev.shoes : pick(season.colors),
-      accessories: locked.has('accessories') ? prev.accessories : pick(season.colors),
-    }))
+
+    const lockedZones = ZONES.filter(z => locked.has(z.id))
+
+    if (lockedZones.length === 0) {
+      // No constraints — pure random from palette
+      const pick = (pool: string[]) => pool[Math.floor(Math.random() * pool.length)]
+      setOutfit(prev => ({
+        hair: pick(season.hairColors),
+        top: pick(season.colors),
+        bottom: pick(season.colors),
+        shoes: pick(season.colors),
+        accessories: pick(season.colors),
+      }))
+      setSelectedZone(null)
+      return
+    }
+
+    // Pick the most visually impactful locked zone as reference
+    const priority: ZoneId[] = ['top', 'hair', 'bottom', 'shoes', 'accessories']
+    const refZone = priority.find(z => locked.has(z)) ?? lockedZones[0].id
+    const refColor = outfit[refZone]
+
+    setOutfit(prev => {
+      const next = { ...prev }
+      for (const z of ZONES) {
+        if (locked.has(z.id)) continue
+        const pool = z.id === 'hair' ? season.hairColors : season.colors
+        if (z.id === 'bottom' || z.id === 'shoes') {
+          // Grounding zones → neutral tones that go with everything
+          next[z.id] = pickHarmonious(pool, refColor, 'neutral')
+        } else {
+          // Accent zones → complement or analogue, randomised each call
+          next[z.id] = pickHarmonious(pool, refColor, Math.random() > 0.5 ? 'complement' : 'analogue')
+        }
+      }
+      return next
+    })
     setSelectedZone(null)
   }
 
