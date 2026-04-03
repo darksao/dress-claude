@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useCallback } from 'react'
-import { AvatarState, AvatarZoneId, Gender } from '@/types'
+import { AvatarState, AvatarZoneId } from '@/types'
 
 interface AvatarSvgProps {
   state: AvatarState
