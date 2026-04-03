@@ -12,46 +12,51 @@ export default function PhotoPage() {
   const router = useRouter()
   const [currentSeason, setCurrentSeason] = useState<SeasonCode | null>(null)
   const [result, setResult] = useState<{ season: SeasonCode; skinHex: string } | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function load() {
-      // Guest mode: load from localStorage
       const stored = localStorage.getItem('dc_quiz')
       if (stored) {
         const parsed = JSON.parse(stored)
-        if (parsed.season) { setCurrentSeason(parsed.season as SeasonCode); return }
+        if (parsed.season) { setCurrentSeason(parsed.season as SeasonCode); setLoading(false); return }
       }
-
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-      const { data } = await supabase.from('profiles').select('season').eq('id', user.id).single()
-      if (data?.season) setCurrentSeason(data.season as SeasonCode)
+      if (user) {
+        const { data } = await supabase.from('profiles').select('season').eq('id', user.id).single()
+        if (data?.season) setCurrentSeason(data.season as SeasonCode)
+      }
+      setLoading(false)
     }
     load()
   }, [])
 
   async function handleResult(season: SeasonCode, skinHex: string) {
     setResult({ season, skinHex })
-
-    // Update localStorage for guest
     const stored = localStorage.getItem('dc_quiz')
     if (stored) {
       const parsed = JSON.parse(stored)
       localStorage.setItem('dc_quiz', JSON.stringify({ ...parsed, season }))
     }
-
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (user) await supabase.from('profiles').update({ season }).eq('id', user.id)
   }
 
-  const season = currentSeason ? (result ? getSeasonByCode(result.season) : getSeasonByCode(currentSeason)) : null
-  const changed = result && result.season !== currentSeason
+  if (loading) {
+    return (
+      <AuthGuard>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
+        </div>
+      </AuthGuard>
+    )
+  }
 
-  return (
-    <AuthGuard>
-      {!currentSeason ? (
+  if (!currentSeason) {
+    return (
+      <AuthGuard>
         <div className="flex items-center justify-center min-h-screen px-6 text-center">
           <div>
             <p className="text-4xl mb-4">🎨</p>
@@ -59,34 +64,34 @@ export default function PhotoPage() {
             <a href="/quiz" className="px-6 py-3 bg-black text-white rounded-xl font-medium">Faire le quiz →</a>
           </div>
         </div>
-      ) : (
+      </AuthGuard>
+    )
+  }
+
+  const season = result ? getSeasonByCode(result.season) : getSeasonByCode(currentSeason)
+  const changed = result && result.season !== currentSeason
+
+  return (
+    <AuthGuard>
       <div className="max-w-lg mx-auto px-6 py-12">
         <h1 className="text-3xl font-bold mb-2">Affine avec une photo</h1>
         <p className="text-gray-500 mb-8">Upload un selfie en lumière naturelle pour affiner ton résultat.</p>
-
         <PhotoAnalyzer currentSeason={currentSeason} onResult={handleResult} />
-
         {result && (
           <div className="mt-8">
             <div className={`p-6 rounded-2xl text-center ${changed ? 'bg-purple-50' : 'bg-green-50'}`}>
               <span className="text-4xl">{season.emoji}</span>
               <h2 className="text-2xl font-bold mt-2">{season.name}</h2>
               <p className="text-gray-500 mt-1">
-                {changed
-                  ? '✨ Ta saison a été ajustée grâce à la photo !'
-                  : '✅ La photo confirme ton résultat du quiz.'}
+                {changed ? '✨ Ta saison a été ajustée grâce à la photo !' : '✅ La photo confirme ton résultat du quiz.'}
               </p>
             </div>
-            <button
-              onClick={() => router.push('/avatar')}
-              className="w-full mt-6 py-3 bg-black text-white rounded-xl font-medium hover:bg-gray-800 transition-colors"
-            >
+            <button onClick={() => router.push('/avatar')} className="w-full mt-6 py-3 bg-black text-white rounded-xl font-medium hover:bg-gray-800 transition-colors">
               Essayer l&apos;avatar →
             </button>
           </div>
         )}
       </div>
-      )}
     </AuthGuard>
   )
 }
