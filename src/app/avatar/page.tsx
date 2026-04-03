@@ -43,10 +43,10 @@ function AvatarContent() {
   const [dataLoading, setDataLoading] = useState(true)
   const [selectedZone, setSelectedZone] = useState<AvatarZoneId | null>(null)
   const [avatarState, setAvatarState] = useState<AvatarState>({
-    hair: '#1C1C1C',
-    top: '#B8D4E3',
-    bottom: '#2C3E6B',
-    shoes: '#FFFFFF',
+    hair: '#8B6345',
+    top: '#5B7D8F',
+    bottom: '#C4A07A',
+    shoes: '#5C3D2E',
   })
 
   useEffect(() => {
