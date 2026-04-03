@@ -177,8 +177,6 @@ function AvatarContent() {
             <div className="bg-gradient-to-b from-gray-50 to-gray-100 rounded-2xl p-6">
               <AvatarSvg
                 state={avatarState}
-                skinTone={SKIN_HEX[profile?.skin_tone || 'medium']}
-                gender={profile?.gender || 'female'}
                 selectedZone={selectedZone}
                 onZoneClick={setSelectedZone}
               />

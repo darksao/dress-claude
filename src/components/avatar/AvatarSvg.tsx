@@ -1,12 +1,10 @@
 'use client'
 
 import { useEffect, useRef, useCallback } from 'react'
-import { AvatarState, AvatarZoneId } from '@/types'
+import { AvatarState, AvatarZoneId, Gender } from '@/types'
 
 interface AvatarSvgProps {
   state: AvatarState
-  skinTone: string
-  gender: string
   selectedZone: AvatarZoneId | null
   onZoneClick: (zone: AvatarZoneId) => void
 }
@@ -170,7 +168,7 @@ export default function AvatarSvg({ state, selectedZone, onZoneClick }: AvatarSv
       <div style={{ position: 'relative', width: '100%', paddingBottom: '100%' }}>
         <canvas
           ref={canvasRef}
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain' }}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
         />
         <svg
           viewBox="0 0 280 280"
