@@ -21,15 +21,23 @@ export default function LandingPage() {
         <p className="mt-4 text-lg md:text-xl text-gray-500 max-w-md">
           Découvre quelles couleurs te mettent en valeur et compose des tenues harmonieuses.
         </p>
-        <Link
-          href="/signup"
-          className="mt-8 px-8 py-4 bg-black text-white rounded-full text-lg font-medium hover:bg-gray-800 transition-colors"
-        >
-          Découvre ta saison →
-        </Link>
+        <div className="mt-8 flex flex-col sm:flex-row gap-3">
+          <Link
+            href="/quiz"
+            className="px-8 py-4 bg-black text-white rounded-full text-lg font-medium hover:bg-gray-800 transition-colors"
+          >
+            📝 Faire le quiz
+          </Link>
+          <Link
+            href="/quiz/photo"
+            className="px-8 py-4 bg-white border-2 border-gray-200 text-gray-700 rounded-full text-lg font-medium hover:border-gray-400 transition-colors"
+          >
+            📸 Analyser avec une photo
+          </Link>
+        </div>
         <Link
           href="/login"
-          className="mt-3 text-sm text-gray-400 hover:text-gray-600"
+          className="mt-4 text-sm text-gray-400 hover:text-gray-600"
         >
           Déjà un compte ? Se connecter
         </Link>

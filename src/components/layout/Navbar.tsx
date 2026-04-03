@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 const NAV_ITEMS = [
-  { href: '/avatar', label: 'Avatar', icon: '👤' },
+  { href: '/result', label: 'Ma palette', icon: '🎨' },
   { href: '/wardrobe', label: 'Garde-robe', icon: '👗' },
   { href: '/guide', label: 'Guide', icon: '📖' },
 ]

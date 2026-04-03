@@ -64,6 +64,27 @@ export function extractColorsFromImage(canvas: HTMLCanvasElement): ExtractedColo
   }
 }
 
+export function determineSeasonFromPhoto(extracted: ExtractedColors): { season: SeasonCode } {
+  const isWarm = extracted.dominantHue >= 15 && extracted.dominantHue <= 55
+  const warmth = isWarm ? 'warm' : 'cool'
+  const depth = extracted.dominantLightness > 0.58 ? 'light' : extracted.dominantLightness > 0.42 ? 'medium' : 'deep'
+  const clarity = extracted.dominantSaturation > 0.35 ? 'bright' : 'soft'
+
+  // Find best matching season
+  const match = Object.values(SEASONS).find(s =>
+    s.characteristics.warmth === warmth &&
+    s.characteristics.depth === depth &&
+    s.characteristics.clarity === clarity
+  ) || Object.values(SEASONS).find(s =>
+    s.characteristics.warmth === warmth &&
+    s.characteristics.depth === depth
+  ) || Object.values(SEASONS).find(s =>
+    s.characteristics.warmth === warmth
+  )
+
+  return { season: match?.code ?? 'light-spring' }
+}
+
 export function refineSeasonFromPhoto(
   currentSeason: SeasonCode,
   extracted: ExtractedColors
