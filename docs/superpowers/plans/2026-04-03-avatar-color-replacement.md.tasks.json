@@ -1,0 +1,19 @@
+{
+  "planPath": "docs/superpowers/plans/2026-04-03-avatar-color-replacement.md",
+  "tasks": [
+    {
+      "id": 0,
+      "subject": "Task 1: Canvas rendering with pixel recoloration",
+      "status": "pending",
+      "description": "**Goal:** Rewrite AvatarSvg.tsx to use canvas-based pixel recoloration.\n\n**Files:**\n- Modify: `src/components/avatar/AvatarSvg.tsx`\n\n**Acceptance Criteria:**\n- [ ] Avatar renders PNG via canvas\n- [ ] Picking a color recolors zone pixels in canvas\n- [ ] 3D shading preserved after recoloring\n- [ ] Other zones and skin/background unaffected\n- [ ] SVG overlay zones remain clickable\n\n**Verify:** Open http://localhost:3000/avatar, select a zone, pick a color → clothing changes color with shading visible.\n\n```json:metadata\n{\"files\": [\"src/components/avatar/AvatarSvg.tsx\"], \"verifyCommand\": \"npx tsc --noEmit\", \"acceptanceCriteria\": [\"Avatar renders PNG via canvas\", \"Picking a color recolors zone pixels\", \"3D shading preserved\", \"Skin/background unaffected\", \"SVG zones clickable\"], \"requiresUserVerification\": false}\n```"
+    },
+    {
+      "id": 1,
+      "subject": "Task 2: User verification — colors and shading",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Confirm user is satisfied that colors change correctly and 3D effect is preserved.\n\n**Files:** none\n\n**Acceptance Criteria:**\n- [ ] User confirms clothing color changes match selection\n- [ ] User confirms 3D shading still visible\n\n**User Verification Required:**\nBefore marking this task complete, you MUST call AskUserQuestion:\n```yaml\nAskUserQuestion:\n  question: \"Teste l'avatar : clique sur une zone (ex: pantalon), choisis une couleur. Est-ce que (1) la couleur change bien et correspond à ce que tu as choisi, et (2) l'aspect 3D/relief est toujours visible ?\"\n  header: \"Vérification avatar\"\n  options:\n    - label: \"Oui, les deux fonctionnent\"\n      description: \"Couleur correcte + 3D préservé — implémentation validée\"\n    - label: \"La couleur est mauvaise ou le 3D a disparu\"\n      description: \"Besoin d'ajuster les plages HSL ou l'algorithme\"\n```\n\n```json:metadata\n{\"files\": [], \"verifyCommand\": \"\", \"acceptanceCriteria\": [\"user confirms color matches selection\", \"user confirms 3D shading preserved\"], \"requiresUserVerification\": true, \"userVerificationPrompt\": \"Teste l'avatar : clique sur une zone, choisis une couleur. Est-ce que la couleur change correctement et le relief 3D est préservé ?\"}\n```"
+    }
+  ],
+  "lastUpdated": "2026-04-03T03:30:00Z"
+}
