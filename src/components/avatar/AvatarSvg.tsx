@@ -18,10 +18,10 @@ const ZONE_LABELS: Record<AvatarZoneId, string> = {
 
 // HSL ranges for zone classification
 const ZONE_HSL: Record<AvatarZoneId, { hMin: number; hMax: number; sMin: number; sMax: number; lMin: number; lMax: number }> = {
-  hair:   { hMin: 20,  hMax: 40,  sMin: 0.30, sMax: 0.65, lMin: 0.28, lMax: 0.52 },
-  top:    { hMin: 195, hMax: 225, sMin: 0.15, sMax: 0.45, lMin: 0.35, lMax: 0.58 },
-  bottom: { hMin: 25,  hMax: 45,  sMin: 0.30, sMax: 0.60, lMin: 0.55, lMax: 0.78 },
-  shoes:  { hMin: 15,  hMax: 35,  sMin: 0.20, sMax: 0.55, lMin: 0.18, lMax: 0.36 },
+  hair:   { hMin: 22,  hMax: 38,  sMin: 0.32, sMax: 0.60, lMin: 0.30, lMax: 0.50 },
+  top:    { hMin: 198, hMax: 222, sMin: 0.18, sMax: 0.42, lMin: 0.38, lMax: 0.56 },
+  bottom: { hMin: 28,  hMax: 42,  sMin: 0.35, sMax: 0.58, lMin: 0.57, lMax: 0.73 },
+  shoes:  { hMin: 17,  hMax: 33,  sMin: 0.22, sMax: 0.52, lMin: 0.20, lMax: 0.34 },
 }
 
 function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
@@ -113,8 +113,10 @@ export default function AvatarSvg({ state, selectedZone, onZoneClick }: AvatarSv
       const [hNew, sNew] = hslCache[zone]!
 
       const pi = i * 4
-      const [, , lOrig] = rgbToHsl(original[pi], original[pi + 1], original[pi + 2])
-      const [r, g, b] = hslToRgb(hNew, sNew, lOrig)
+      const [, sOrig, lOrig] = rgbToHsl(original[pi], original[pi + 1], original[pi + 2])
+      // Scale saturation by original pixel's saturation to preserve natural lighting variation
+      const sScaled = sNew * Math.min(sOrig / 0.38, 1.0)
+      const [r, g, b] = hslToRgb(hNew, sScaled, lOrig)
       output[pi] = r
       output[pi + 1] = g
       output[pi + 2] = b
