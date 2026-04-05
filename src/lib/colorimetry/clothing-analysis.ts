@@ -125,10 +125,10 @@ export function analyzeClothingPhoto(
   if (mode === 'vetement' || colors.length === 0) return { colors }
 
   const hasAvoid = colors.some(c => c.rating === 'a-eviter')
-  const hasExcellente = colors.some(c => c.rating === 'excellente')
+  const allExcellente = colors.every(c => c.rating === 'excellente')
   const globalVerdict: ClothingRating = hasAvoid
     ? 'a-eviter'
-    : hasExcellente
+    : allExcellente
     ? 'excellente'
     : 'neutre'
 
