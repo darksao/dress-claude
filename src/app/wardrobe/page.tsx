@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { getSeasonByCode } from '@/lib/colorimetry/seasons'
 import AuthGuard from '@/components/layout/AuthGuard'
+import ClothingAnalyzer from '@/components/wardrobe/ClothingAnalyzer'
 import { SeasonCode, SeasonPalette } from '@/types'
 
 type ZoneId = 'hair' | 'top' | 'bottom' | 'shoes' | 'accessories'
@@ -372,6 +373,11 @@ export default function WardrobePage() {
             </div>
           </div>
         )}
+
+        {/* Clothing photo analysis */}
+        <div className="mt-6">
+          <ClothingAnalyzer season={season} />
+        </div>
       </div>
     </AuthGuard>
   )
