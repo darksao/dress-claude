@@ -121,7 +121,7 @@ export default function ClothingAnalyzer({ season }: Props) {
             >
               <span className="text-3xl block mb-2">📂</span>
               <span className="text-sm text-gray-500 font-medium">
-                Glisse une photo ici ou clique
+                Clique pour choisir une photo
               </span>
               <span className="text-xs text-gray-400 block mt-1">
                 {mode === 'vetement'
