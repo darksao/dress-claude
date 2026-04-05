@@ -77,8 +77,12 @@ export function extractClothingColors(
   const ctx = canvas.getContext('2d')!
   const { width, height } = canvas
 
+  // Sample only the center 50% of width to avoid background (grass, walls, etc.)
+  const cropX = Math.floor(width * 0.25)
+  const cropW = Math.floor(width * 0.5)
+
   if (mode === 'vetement') {
-    const hex = extractDominantFromPixels(ctx.getImageData(0, 0, width, height).data)
+    const hex = extractDominantFromPixels(ctx.getImageData(cropX, 0, cropW, height).data)
     return hex ? [{ hex }] : []
   }
 
@@ -90,7 +94,7 @@ export function extractClothingColors(
   ]
 
   return zones.flatMap(({ zone, y }) => {
-    const hex = extractDominantFromPixels(ctx.getImageData(0, y, width, zoneH).data)
+    const hex = extractDominantFromPixels(ctx.getImageData(cropX, y, cropW, zoneH).data)
     return hex ? [{ hex, zone }] : []
   })
 }
